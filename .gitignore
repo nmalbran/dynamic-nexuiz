@@ -1,3 +1,10 @@
+# Nexuiz things
+Nexuiz/
+hfs.exe
+teamtalk/
+vfs.vfs
+
+# python
 *.py[cod]
 
 # C extensions
