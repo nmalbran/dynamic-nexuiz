@@ -89,17 +89,17 @@ class DynamicConfigWriter:
 
 def main():
 	parser = OptionParser()
-	parser.add_option('-t', '--gametype', help="Tipo de juego [ctf|dm]", choices=['ctf', 'dm'], default=DEFAULT_GAMETYPE)
-	parser.add_option('-n', '--minplayers', type="int", help="Numero de min players", default=DEFAULT_MINPLAYERS)
-	parser.add_option('--url', help="Url para los mapas", default=DEFAULT_MAPS_URL)
+	parser.add_option('-t', '--gametype', help="Type of Game [ctf|dm]", choices=['ctf', 'dm'], default=DEFAULT_GAMETYPE)
+	parser.add_option('-n', '--minplayers', type="int", help="Minimum number of players", default=DEFAULT_MINPLAYERS)
+	parser.add_option('--url', help="Url for maps downloading", default=DEFAULT_MAPS_URL)
 
-	parser.add_option('-l', '--launch', action="store_true", help="Levantar los servidor: HFS, Teamtalk y Nexuiz (en linux)", default=False)
+	parser.add_option('-l', '--launch', action="store_true", help="Launch the servers: HFS, Teamtalk and Nexuiz (on linux)", default=False)
 
-	parser.add_option('--hfs', help="Ejecutable del HFS", default=DEFAULT_HFS_EXE)
-	parser.add_option('--teamtalk', help="Ejecutable del teamtalk server", default=DEFAULT_TEAMTALKD)
-	parser.add_option('--ttconfig', help="Archivo de configuracion del Team Talk Server", default=DEFAULT_TEAMTALK_CONFIG_FILENAME)
-	parser.add_option('--nexuiz', help="Ejecutable del servidor de Nexuiz", default=DEFAULT_NEXUIZ_SERVER)
-	parser.add_option('--nexuiz_folder', help="Carpeta donde esta Nexuiz", default=NEXUIZ_ROOT)
+	parser.add_option('--hfs', help="HFS executable by wine", default=DEFAULT_HFS_EXE)
+	parser.add_option('--teamtalk', help="teamtalkd file", default=DEFAULT_TEAMTALKD)
+	parser.add_option('--ttconfig', help="Configuration file for teamtalk server", default=DEFAULT_TEAMTALK_CONFIG_FILENAME)
+	parser.add_option('--nexuiz', help="Nexuiz executable", default=DEFAULT_NEXUIZ_SERVER)
+	parser.add_option('--nexuiz_folder', help="Nexuiz folder", default=NEXUIZ_ROOT)
 
 
 	(options, args) = parser.parse_args()
