@@ -1,7 +1,9 @@
-dynamic-nexuiz
-==============
+Dynamic Nexuiz Server Launcher
+==============================
 
 Script to dynamically update some settings and launch Nexuiz Server, HFS and Teamtalk.
+Work on Linux. Wine is required to launch HFS.
+
 
 #### What it does
 
@@ -12,7 +14,42 @@ Script to dynamically update some settings and launch Nexuiz Server, HFS and Tea
 5. Launch teamtalk
 6. Launch Nexuiz
 
-#### Default setup expected:
+
+
+#### Example
+	
+	./dynamic_nexuiz_server_launcher.py -t dm -n 10 -l
+
+
+
+#### Command line options
+
+All command line options have default parameters specified below.
+
+	Usage: dynamic_nexuiz_server_launcher.py [options]
+
+	Options:
+	  -h, --help            show this help message and exit
+
+	  -t GAMETYPE, --gametype=GAMETYPE
+	                        Type of Game [ctf|dm]
+	  -n MINPLAYERS, --minplayers=MINPLAYERS
+	                        Minimum number of players
+	  --url=URL             Url for maps downloading
+
+	  -l, --launch          Launch the servers: HFS, Teamtalk and Nexuiz (on
+	                        linux)
+
+	  --hfs=HFS             HFS executable by wine
+	  --teamtalk=TEAMTALK   teamtalkd file
+	  --ttconfig=TTCONFIG   Configuration file for teamtalk server
+	  --nexuiz=NEXUIZ       Nexuiz executable
+	  --nexuiz_folder=NEXUIZ_FOLDER
+	                        Nexuiz folder
+
+
+
+#### Default setup expected
 
 	├── dynamic_nexuiz_server_launcher.py
 	├── Nexuiz
@@ -33,8 +70,15 @@ Script to dynamically update some settings and launch Nexuiz Server, HFS and Tea
 	├── hfs.exe
 	└── vfs.vfs
 
+When editing server config files, edit <*.cfg.base> files. Then, the script will automatically update <*.cfg> files.
+
+
 
 #### Default script parameters parameters
+
+These parameters describe the above setting, change at will for a different setup.
+Also they can be passed as command line options (see above).
+
 
 	ROOT
 		Full path to dynamic_nexuiz_server_launcher.py
@@ -43,12 +87,12 @@ Script to dynamically update some settings and launch Nexuiz Server, HFS and Tea
 	TEAMTALK_ROOT
 		Full path to teamtalk folder
 
-	DEFAULT_GAMETYPE
+	DEFAULT_GAMETYPE = 'ctf'
 		Default gametype setting (ctf, dm ...)
-	DEFAULT_MINPLAYERS
+	DEFAULT_MINPLAYERS = 8
 		Default minplayers setting (int)
-	DEFAULT_MAPS_URL
-		Default url for maps (:8080/maps/)
+	DEFAULT_MAPS_URL = ':8080/maps/'
+		Default url for maps download
 
 	DEFAULT_HFS_EXE
 		Full path to hfs executable
@@ -58,24 +102,3 @@ Script to dynamically update some settings and launch Nexuiz Server, HFS and Tea
 		Full path to teamtalk config file
 	DEFAULT_NEXUIZ_SERVER
 		Nexuiz executable
-
-
-#### Command line options
-
-	Usage: dynamic_nexuiz_server_launcher.py [options]
-
-	Options:
-	  -h, --help            show this help message and exit
-	  -t GAMETYPE, --gametype=GAMETYPE
-	                        Type of Game [ctf|dm]
-	  -n MINPLAYERS, --minplayers=MINPLAYERS
-	                        Minimum number of players
-	  --url=URL             Url for maps downloading
-	  -l, --launch          Launch the servers: HFS, Teamtalk and Nexuiz (on
-	                        linux)
-	  --hfs=HFS             HFS executable by wine
-	  --teamtalk=TEAMTALK   teamtalkd file
-	  --ttconfig=TTCONFIG   Configuration file for teamtalk server
-	  --nexuiz=NEXUIZ       Nexuiz executable
-	  --nexuiz_folder=NEXUIZ_FOLDER
-	                        Nexuiz folder
