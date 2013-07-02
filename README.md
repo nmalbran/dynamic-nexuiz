@@ -70,11 +70,11 @@ All command line options have default parameters specified below.
 	├── hfs.exe
 	└── vfs.vfs
 
-When editing server config files, edit <*.cfg.base> files. Then, the script will automatically update <*.cfg> files.
+When editing server config files, edit `*.cfg.base` files. Then, the script will automatically update `*.cfg` files.
 
 
 
-#### Default script parameters parameters
+#### Default script parameters
 
 These parameters describe the above setting, change at will for a different setup.
 Also they can be passed as command line options (see above).
