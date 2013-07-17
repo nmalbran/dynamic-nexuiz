@@ -8,16 +8,17 @@ Work on Linux. Wine is required to launch HFS.
 #### What it does
 
 1. Update local ip in Nexuiz config file
-2. Update custom settings in Nexuiz config file
-3. Update local ip in teamtalk config file
-4. Launch HFS with wine
-5. Launch teamtalk
-6. Launch Nexuiz
+2. Update log filename in Nexuiz config file (Adding date)
+3. Update custom settings in Nexuiz config file
+4. Update local ip in teamtalk config file
+5. Launch HFS with wine
+6. Launch teamtalk
+7. Launch Nexuiz
 
 
 
 #### Example
-	
+
 	./dynamic_nexuiz_server_launcher.py -t dm -n 10 -l
 
 

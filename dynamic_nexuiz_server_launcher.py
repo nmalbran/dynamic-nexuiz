@@ -3,6 +3,7 @@ import os
 import socket
 from optparse import OptionParser
 import subprocess
+import time
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 NEXUIZ_ROOT = os.path.join(ROOT, 'Nexuiz')
@@ -15,7 +16,7 @@ DEFAULT_MAPS_URL = ':8080/maps/'
 DEFAULT_HFS_EXE = os.path.join(ROOT, 'hfs.exe')
 DEFAULT_TEAMTALKD = os.path.join(TEAMTALK_ROOT, 'teamtalkd')
 DEFAULT_TEAMTALK_CONFIG_FILENAME = os.path.join(TEAMTALK_ROOT, 'tt4svc.xml')
-DEFAULT_NEXUIZ_SERVER = 'nexuiz-linux-x86_64-dedicated' 
+DEFAULT_NEXUIZ_SERVER = 'nexuiz-linux-x86_64-dedicated'
 
 
 class DynamicConfigWriter:
@@ -29,6 +30,7 @@ class DynamicConfigWriter:
 		self.ip = self._get_ip()
 		self.minplayers = minplayers
 		self.url = url
+		self.logfile = "%s-%s.log" % (self._get_time(), os.path.splitext(self.nexuiz_config_filename)[0])
 		self.print_conf()
 
 	def get_nexuiz_config_filename(self):
@@ -39,6 +41,7 @@ class DynamicConfigWriter:
 		print "minplayers:", self.minplayers
 		print "config file:", self.nexuiz_config_filename
 		print "url:", self.url
+		print "logfile:", self.logfile
 		print ""
 
 	def update_config(self):
@@ -61,6 +64,9 @@ class DynamicConfigWriter:
 	        del s
 	    return ip
 
+	def _get_time(self):
+		return time.strftime("%Y%m%d")
+
 	def update_nexuiz_config(self):
 	    target_file = open(self.full_nexuiz_config_filename, 'w')
 	    for line in open(self.full_nexuiz_config_filename + '.base'):
@@ -70,6 +76,9 @@ class DynamicConfigWriter:
 
 	        elif line.startswith('minplayers'):
 	        	line = 'minplayers %d\n' % self.minplayers
+
+	        elif line.startswith('log_file'):
+	        	line = 'log_file "%s"' % self.logfile
 
 	        target_file.write(line)
 
