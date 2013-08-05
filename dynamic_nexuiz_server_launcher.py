@@ -48,12 +48,8 @@ class DynamicConfigWriter:
 		print ""
 
 	def update_config(self):
-		print "Updating Nexuiz Config"
 		self.update_nexuiz_config()
-		print "Done\n"
-		print "Updating Teamtalk Config"
 		self.update_teamtalk_config()
-		print "Done\n"
 
 	def _get_ip(self):
 	    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -71,6 +67,7 @@ class DynamicConfigWriter:
 		return time.strftime("%Y%m%d")
 
 	def update_nexuiz_config(self):
+		print "Updating Nexuiz Config"
 	    target_file = open(self.full_nexuiz_config_filename, 'w')
 	    for line in open(self.full_nexuiz_config_filename + '.base'):
 
@@ -89,8 +86,10 @@ class DynamicConfigWriter:
 	        target_file.write(line)
 
 	    target_file.close()
+	    print "Done\n"
 
 	def update_teamtalk_config(self):
+		print "Updating Teamtalk Config"
 	    target_file = open(self.teamtalk_config_filename, 'w')
 	    for line in open(self.teamtalk_config_filename + '.base'):
 	        if line.startswith('        <bind-ip>'):
@@ -99,6 +98,7 @@ class DynamicConfigWriter:
 	        target_file.write(line)
 
 	    target_file.close()
+	    print "Done\n"
 
 
 
@@ -117,6 +117,9 @@ def main():
 	parser.add_option('--nexuiz', help="Nexuiz executable", default=DEFAULT_NEXUIZ_SERVER)
 	parser.add_option('--nexuiz_folder', help="Nexuiz folder", default=NEXUIZ_ROOT)
 
+	parser.add_option('--nott', dest='tt', action='store_false', help="Don't start teamtalk", default=True)
+	parser.add_option('--nonex', dest='nex', action='store_false', help="Don't start Nexuiz nor HFS", default=True)
+
 
 	(options, args) = parser.parse_args()
 
@@ -126,7 +129,11 @@ def main():
 							  nexuiz_folder=options.nexuiz_folder,
 							  url=options.url,
 							  fraglimit=options.fraglimit)
-	dcw.update_config()
+
+	if options.nex:
+		dcw.update_nexuiz_config()
+	if options.tt:
+		dcw.update_teamtalk_config()
 
 	print "Nexuiz Folder: %s" % options.nexuiz_folder
 	print "Nexuiz: %s" % options.nexuiz
@@ -136,18 +143,20 @@ def main():
 	print ""
 
 	if options.launch:
-		print "Launching HFS"
-		os.system('wine %s &' % options.hfs)
-		print "Done"
+		if options.tt:
+			print "Launching TeamTalk"
+			os.system('%s -nd -c %s &' % (options.teamtalk, options.ttconfig))
+			print "Done"
 
-		print "Launching TeamTalk"
-		os.system('%s -nd -c %s &' % (options.teamtalk, options.ttconfig))
-		print "Done"
+		if options.nex:
+			print "Launching HFS"
+			os.system('wine %s &' % options.hfs)
+			print "Done"
 
-		print "Launching Nexuiz Server"
-		full_nexuiz = os.path.join(options.nexuiz_folder, options.nexuiz)
-		os.chdir(options.nexuiz_folder)
-		os.system('%s +serverconfig %s' % (full_nexuiz, dcw.get_nexuiz_config_filename()))
+			print "Launching Nexuiz Server"
+			full_nexuiz = os.path.join(options.nexuiz_folder, options.nexuiz)
+			os.chdir(options.nexuiz_folder)
+			os.system('%s +serverconfig %s' % (full_nexuiz, dcw.get_nexuiz_config_filename()))
 
 
 if __name__ == '__main__':
