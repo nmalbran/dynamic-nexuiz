@@ -13,16 +13,17 @@ DEFAULT_GAMETYPE = 'ctf'
 DEFAULT_MINPLAYERS = 8
 DEFAULT_MAPS_URL = ':8080/maps/'
 DEFAULT_FRAGLIMIT = 15
+DEFAULT_MESSAGE = "Welcome to SkyRyu Nexuiz Server"
 
 DEFAULT_HFS_EXE = os.path.join(ROOT, 'hfs.exe')
 DEFAULT_TEAMTALKD = os.path.join(TEAMTALK_ROOT, 'teamtalkd')
 DEFAULT_TEAMTALK_CONFIG_FILENAME = os.path.join(TEAMTALK_ROOT, 'tt4svc.xml')
-DEFAULT_NEXUIZ_SERVER = 'nexuiz-linux-x86_64-dedicated'
+DEFAULT_NEXUIZ_SERVER = 'nexuiz-linux-686-dedicated'
 
 
 class DynamicConfigWriter:
 
-    def __init__(self, gametype, minplayers, teamtalk_config_filename, url, nexuiz_folder, fraglimit):
+    def __init__(self, gametype, minplayers, teamtalk_config_filename, url, nexuiz_folder, fraglimit, message):
         self.nexuiz_config_filename = "00_server_%s.cfg" % gametype
         self.full_nexuiz_config_filename = os.path.join(nexuiz_folder, 'data', self.nexuiz_config_filename)
 
@@ -33,6 +34,7 @@ class DynamicConfigWriter:
         self.url = url
         self.logfile = "%s-%s.log" % (self._get_time(), os.path.splitext(self.nexuiz_config_filename)[0])
         self.fraglimit = fraglimit
+        self.message = message
         self.print_conf()
 
     def get_nexuiz_config_filename(self):
@@ -45,6 +47,7 @@ class DynamicConfigWriter:
         print "config file:", self.nexuiz_config_filename
         print "url:", self.url
         print "logfile:", self.logfile
+        print "welcome message:", self.message
         print ""
 
     def update_config(self):
@@ -83,6 +86,9 @@ class DynamicConfigWriter:
             elif line.startswith('fraglimit_override'):
                 line = 'fraglimit_override %d\n' % self.fraglimit
 
+            elif line.startswith('sv_motd'):
+                line = 'sv_motd "%s"\n' % self.message
+
             target_file.write(line)
 
         target_file.close()
@@ -108,6 +114,7 @@ def main():
     parser.add_option('-n', '--minplayers', type="int", help="Minimum number of players", default=DEFAULT_MINPLAYERS)
     parser.add_option('-k', '--fraglimit', type="int", help="Number of frags to end the game", default=DEFAULT_FRAGLIMIT)
     parser.add_option('--url', help="Url for maps downloading", default=DEFAULT_MAPS_URL)
+    parser.add_option('-m', '--message', help="welcome message", default=DEFAULT_MESSAGE)
 
     parser.add_option('-l', '--launch', action="store_true", help="Launch the servers: HFS, Teamtalk and Nexuiz (on linux)", default=False)
 
@@ -128,7 +135,8 @@ def main():
                               teamtalk_config_filename=options.ttconfig,
                               nexuiz_folder=options.nexuiz_folder,
                               url=options.url,
-                              fraglimit=options.fraglimit)
+                              fraglimit=options.fraglimit,
+                              message=options.message)
 
     if options.nex:
         dcw.update_nexuiz_config()
