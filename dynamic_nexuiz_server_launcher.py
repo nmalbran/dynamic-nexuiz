@@ -13,7 +13,6 @@ DEFAULT_GAMETYPE = 'ctf'
 DEFAULT_MINPLAYERS = 8
 DEFAULT_MAPS_URL = ':8080/maps/'
 DEFAULT_FRAGLIMIT = 15
-DEFAULT_MESSAGE = "Welcome to SkyRyu Nexuiz Server"
 
 DEFAULT_HFS_EXE = os.path.join(ROOT, 'hfs.exe')
 DEFAULT_TEAMTALKD = os.path.join(TEAMTALK_ROOT, 'teamtalkd')
@@ -114,7 +113,10 @@ def main():
     parser.add_option('-n', '--minplayers', type="int", help="Minimum number of players", default=DEFAULT_MINPLAYERS)
     parser.add_option('-k', '--fraglimit', type="int", help="Number of frags to end the game", default=DEFAULT_FRAGLIMIT)
     parser.add_option('--url', help="Url for maps downloading", default=DEFAULT_MAPS_URL)
-    parser.add_option('-m', '--message', help="welcome message", default=DEFAULT_MESSAGE)
+    parser.add_option('-m', '--message', help="welcome message", default=None)
+    parser.add_option('-r', '--red', help="Red Team", default=None)
+    parser.add_option('-b', '--blue', help="Blue Team", default=None)
+
 
     parser.add_option('-l', '--launch', action="store_true", help="Launch the servers: HFS, Teamtalk and Nexuiz (on linux)", default=False)
 
@@ -130,13 +132,21 @@ def main():
 
     (options, args) = parser.parse_args()
 
+    w_message = ""
+    if options.message:
+        w_message += " %s " % options.message
+    if options.blue:
+        w_message += "^x00F %s " % options.blue
+    if options.red:
+        w_message += "^xF00 %s " % options.red
+
     dcw = DynamicConfigWriter(gametype=options.gametype,
                               minplayers=options.minplayers,
                               teamtalk_config_filename=options.ttconfig,
                               nexuiz_folder=options.nexuiz_folder,
                               url=options.url,
                               fraglimit=options.fraglimit,
-                              message=options.message)
+                              message=w_message)
 
     if options.nex:
         dcw.update_nexuiz_config()
