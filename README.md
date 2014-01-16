@@ -11,8 +11,8 @@ Work on Linux. Wine is required to launch HFS.
 2. Update log filename in Nexuiz config file (Adding date)
 3. Update custom settings in Nexuiz config file
 4. Update local ip in teamtalk config file
-5. Launch HFS with wine
-6. Launch teamtalk
+5. Launch teamtalk (not by default)
+6. Launch HFS with wine
 7. Launch Nexuiz
 
 
@@ -31,22 +31,27 @@ All command line options have default parameters specified below.
 
 	Options:
 	  -h, --help            show this help message and exit
-
 	  -t GAMETYPE, --gametype=GAMETYPE
-	                        Type of Game [ctf|dm]
+	                        Type of Game [ctf|dm|tdm]
 	  -n MINPLAYERS, --minplayers=MINPLAYERS
 	                        Minimum number of players
+	  -k FRAGLIMIT, --fraglimit=FRAGLIMIT
+	                        Number of frags to end the game
 	  --url=URL             Url for maps downloading
-
+	  -m MESSAGE, --message=MESSAGE
+	                        welcome message
+	  -r RED, --red=RED     Red Team
+	  -b BLUE, --blue=BLUE  Blue Team
 	  -l, --launch          Launch the servers: HFS, Teamtalk and Nexuiz (on
 	                        linux)
-
 	  --hfs=HFS             HFS executable by wine
 	  --teamtalk=TEAMTALK   teamtalkd file
 	  --ttconfig=TTCONFIG   Configuration file for teamtalk server
 	  --nexuiz=NEXUIZ       Nexuiz executable
 	  --nexuiz_folder=NEXUIZ_FOLDER
 	                        Nexuiz folder
+	  --tt                  Start teamtalk
+	  --nonex               Don't start Nexuiz nor HFS
 
 
 

@@ -109,7 +109,7 @@ class DynamicConfigWriter:
 
 def main():
     parser = OptionParser()
-    parser.add_option('-t', '--gametype', help="Type of Game [ctf|dm]", choices=['ctf', 'dm'], default=DEFAULT_GAMETYPE)
+    parser.add_option('-t', '--gametype', help="Type of Game [ctf|dm|tdm]", choices=['ctf', 'dm', 'tdm'], default=DEFAULT_GAMETYPE)
     parser.add_option('-n', '--minplayers', type="int", help="Minimum number of players", default=DEFAULT_MINPLAYERS)
     parser.add_option('-k', '--fraglimit', type="int", help="Number of frags to end the game", default=DEFAULT_FRAGLIMIT)
     parser.add_option('--url', help="Url for maps downloading", default=DEFAULT_MAPS_URL)
@@ -126,7 +126,7 @@ def main():
     parser.add_option('--nexuiz', help="Nexuiz executable", default=DEFAULT_NEXUIZ_SERVER)
     parser.add_option('--nexuiz_folder', help="Nexuiz folder", default=NEXUIZ_ROOT)
 
-    parser.add_option('--nott', dest='tt', action='store_false', help="Don't start teamtalk", default=True)
+    parser.add_option('--tt', dest='tt', action='store_true', help="Start teamtalk", default=False)
     parser.add_option('--nonex', dest='nex', action='store_false', help="Don't start Nexuiz nor HFS", default=True)
 
 
@@ -172,7 +172,7 @@ def main():
 
         if options.nex:
             print "Launching HFS"
-            os.system('wine %s &' % options.hfs)
+            subprocess.Popen(['wine', options.hfs])
             print "Done\n"
 
             print "Launching Nexuiz Server"
