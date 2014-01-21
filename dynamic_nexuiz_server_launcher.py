@@ -17,138 +17,169 @@ DEFAULT_FRAGLIMIT = 15
 DEFAULT_HFS_EXE = os.path.join(ROOT, 'hfs.exe')
 DEFAULT_TEAMTALKD = os.path.join(TEAMTALK_ROOT, 'teamtalkd')
 DEFAULT_TEAMTALK_CONFIG_FILENAME = os.path.join(TEAMTALK_ROOT, 'tt4svc.xml')
-DEFAULT_NEXUIZ_SERVER = 'nexuiz-linux-x86_64-dedicated'
+DEFAULT_NEXUIZ_SERVER = 'nexuiz-linux-686-dedicated'
 
 
 class DynamicConfigWriter:
 
-	def __init__(self, gametype, minplayers, teamtalk_config_filename, url, nexuiz_folder, fraglimit):
-		self.nexuiz_config_filename = "00_server_%s.cfg" % gametype
-		self.full_nexuiz_config_filename = os.path.join(nexuiz_folder, 'data', self.nexuiz_config_filename)
+    def __init__(self, gametype, minplayers, teamtalk_config_filename, url, nexuiz_folder, fraglimit, message):
+        self.nexuiz_config_filename = "00_server_%s.cfg" % gametype
+        self.full_nexuiz_config_filename = os.path.join(nexuiz_folder, 'data', self.nexuiz_config_filename)
 
-		self.teamtalk_config_filename = teamtalk_config_filename
+        self.teamtalk_config_filename = teamtalk_config_filename
 
-		self.ip = self._get_ip()
-		self.minplayers = minplayers
-		self.url = url
-		self.logfile = "%s-%s.log" % (self._get_time(), os.path.splitext(self.nexuiz_config_filename)[0])
-		self.fraglimit = fraglimit
-		self.print_conf()
+        self.ip = self._get_ip()
+        self.minplayers = minplayers
+        self.url = url
+        self.logfile = "%s-%s.log" % (self._get_time(), os.path.splitext(self.nexuiz_config_filename)[0])
+        self.fraglimit = fraglimit
+        self.message = message
+        self.print_conf()
 
-	def get_nexuiz_config_filename(self):
-		return self.nexuiz_config_filename
+    def get_nexuiz_config_filename(self):
+        return self.nexuiz_config_filename
 
-	def print_conf(self):
-		print "Local IP is:", self.ip
-		print "minplayers:", self.minplayers
-		print "fraglimit_override:", self.fraglimit
-		print "config file:", self.nexuiz_config_filename
-		print "url:", self.url
-		print "logfile:", self.logfile
-		print ""
+    def print_conf(self):
+        print "Local IP is:", self.ip
+        print "minplayers:", self.minplayers
+        print "fraglimit_override:", self.fraglimit
+        print "config file:", self.nexuiz_config_filename
+        print "url:", self.url
+        print "logfile:", self.logfile
+        print "welcome message:", self.message
+        print ""
 
-	def update_config(self):
-		print "Updating Nexuiz Config"
-		self.update_nexuiz_config()
-		print "Done\n"
-		print "Updating Teamtalk Config"
-		self.update_teamtalk_config()
-		print "Done\n"
+    def update_config(self):
+        self.update_nexuiz_config()
+        self.update_teamtalk_config()
 
-	def _get_ip(self):
-	    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    def _get_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-	    try:
-	        s.connect(('google.com', 9))
-	        ip = s.getsockname()[0]
-	    except socket.error:
-	        ip = socket.gethostbyname(socket.gethostname())
-	    finally:
-	        del s
-	    return ip
+        try:
+            s.connect(('google.com', 9))
+            ip = s.getsockname()[0]
+        except socket.error:
+            ip = socket.gethostbyname(socket.gethostname())
+        finally:
+            del s
+        return ip
 
-	def _get_time(self):
-		return time.strftime("%Y%m%d")
+    def _get_time(self):
+        return time.strftime("%Y%m%d")
 
-	def update_nexuiz_config(self):
-	    target_file = open(self.full_nexuiz_config_filename, 'w')
-	    for line in open(self.full_nexuiz_config_filename + '.base'):
+    def update_nexuiz_config(self):
+        print "Updating Nexuiz Config"
+        target_file = open(self.full_nexuiz_config_filename, 'w')
+        for line in open(self.full_nexuiz_config_filename + '.base'):
 
-	        if line.startswith('sv_curl_defaulturl http://'):
-	            line = 'sv_curl_defaulturl http://%s%s\n' % (self.ip, self.url)
+            if line.startswith('sv_curl_defaulturl http://'):
+                line = 'sv_curl_defaulturl http://%s%s\n' % (self.ip, self.url)
 
-	        elif line.startswith('minplayers'):
-	        	line = 'minplayers %d\n' % self.minplayers
+            elif line.startswith('minplayers'):
+                line = 'minplayers %d\n' % self.minplayers
 
-	        elif line.startswith('log_file'):
-	        	line = 'log_file "%s"\n' % self.logfile
+            elif line.startswith('log_file'):
+                line = 'log_file "%s"\n' % self.logfile
 
-	        elif line.startswith('fraglimit_override'):
-	        	line = 'fraglimit_override %d\n' % self.fraglimit
+            elif line.startswith('fraglimit_override'):
+                line = 'fraglimit_override %d\n' % self.fraglimit
 
-	        target_file.write(line)
+            elif line.startswith('sv_motd'):
+                line = 'sv_motd "%s"\n' % self.message
 
-	    target_file.close()
+            target_file.write(line)
 
-	def update_teamtalk_config(self):
-	    target_file = open(self.teamtalk_config_filename, 'w')
-	    for line in open(self.teamtalk_config_filename + '.base'):
-	        if line.startswith('        <bind-ip>'):
-	            line = '        <bind-ip>%s</bind-ip>\n' % self.ip
+        target_file.close()
+        print "Done\n"
 
-	        target_file.write(line)
+    def update_teamtalk_config(self):
+        print "Updating Teamtalk Config"
+        target_file = open(self.teamtalk_config_filename, 'w')
+        for line in open(self.teamtalk_config_filename + '.base'):
+            if line.startswith('        <bind-ip>'):
+                line = '        <bind-ip>%s</bind-ip>\n' % self.ip
 
-	    target_file.close()
+            target_file.write(line)
+
+        target_file.close()
+        print "Done\n"
 
 
 
 def main():
-	parser = OptionParser()
-	parser.add_option('-t', '--gametype', help="Type of Game [ctf|dm]", choices=['ctf', 'dm'], default=DEFAULT_GAMETYPE)
-	parser.add_option('-n', '--minplayers', type="int", help="Minimum number of players", default=DEFAULT_MINPLAYERS)
-	parser.add_option('-k', '--fraglimit', type="int", help="Number of frags to end the game", default=DEFAULT_FRAGLIMIT)
-	parser.add_option('--url', help="Url for maps downloading", default=DEFAULT_MAPS_URL)
-
-	parser.add_option('-l', '--launch', action="store_true", help="Launch the servers: HFS, Teamtalk and Nexuiz (on linux)", default=False)
-
-	parser.add_option('--hfs', help="HFS executable by wine", default=DEFAULT_HFS_EXE)
-	parser.add_option('--teamtalk', help="teamtalkd file", default=DEFAULT_TEAMTALKD)
-	parser.add_option('--ttconfig', help="Configuration file for teamtalk server", default=DEFAULT_TEAMTALK_CONFIG_FILENAME)
-	parser.add_option('--nexuiz', help="Nexuiz executable", default=DEFAULT_NEXUIZ_SERVER)
-	parser.add_option('--nexuiz_folder', help="Nexuiz folder", default=NEXUIZ_ROOT)
+    parser = OptionParser()
+    parser.add_option('-t', '--gametype', help="Type of Game [ctf|dm|tdm]", choices=['ctf', 'dm', 'tdm'], default=DEFAULT_GAMETYPE)
+    parser.add_option('-n', '--minplayers', type="int", help="Minimum number of players", default=DEFAULT_MINPLAYERS)
+    parser.add_option('-k', '--fraglimit', type="int", help="Number of frags to end the game", default=DEFAULT_FRAGLIMIT)
+    parser.add_option('--url', help="Url for maps downloading", default=DEFAULT_MAPS_URL)
+    parser.add_option('-m', '--message', help="welcome message", default=None)
+    parser.add_option('-r', '--red', help="Red Team", default=None)
+    parser.add_option('-b', '--blue', help="Blue Team", default=None)
 
 
-	(options, args) = parser.parse_args()
+    parser.add_option('-l', '--launch', action="store_true", help="Launch the servers: HFS, Teamtalk and Nexuiz (on linux)", default=False)
 
-	dcw = DynamicConfigWriter(gametype=options.gametype,
-							  minplayers=options.minplayers,
-							  teamtalk_config_filename=options.ttconfig,
-							  nexuiz_folder=options.nexuiz_folder,
-							  url=options.url,
-							  fraglimit=options.fraglimit)
-	dcw.update_config()
+    parser.add_option('--hfs', help="HFS executable by wine", default=DEFAULT_HFS_EXE)
+    parser.add_option('--teamtalk', help="teamtalkd file", default=DEFAULT_TEAMTALKD)
+    parser.add_option('--ttconfig', help="Configuration file for teamtalk server", default=DEFAULT_TEAMTALK_CONFIG_FILENAME)
+    parser.add_option('--nexuiz', help="Nexuiz executable", default=DEFAULT_NEXUIZ_SERVER)
+    parser.add_option('--nexuiz_folder', help="Nexuiz folder", default=NEXUIZ_ROOT)
 
-	print "Nexuiz Folder: %s" % options.nexuiz_folder
-	print "Nexuiz: %s" % options.nexuiz
-	print "HFS.exe: %s" % options.hfs
-	print "Teamtalkd: %s" % options.teamtalk
-	print "Teamtalk config: %s" % options.ttconfig
-	print ""
+    parser.add_option('--tt', dest='tt', action='store_true', help="Start teamtalk", default=False)
+    parser.add_option('--nonex', dest='nex', action='store_false', help="Don't start Nexuiz nor HFS", default=True)
 
-	if options.launch:
-		print "Launching HFS"
-		os.system('wine %s &' % options.hfs)
-		print "Done"
 
-		print "Launching TeamTalk"
-		os.system('%s -nd -c %s &' % (options.teamtalk, options.ttconfig))
-		print "Done"
+    (options, args) = parser.parse_args()
 
-		print "Launching Nexuiz Server"
-		full_nexuiz = os.path.join(options.nexuiz_folder, options.nexuiz)
-		os.chdir(options.nexuiz_folder)
-		os.system('%s +serverconfig %s' % (full_nexuiz, dcw.get_nexuiz_config_filename()))
+    w_message = ""
+    if options.message:
+        w_message += " %s " % options.message
+    if options.blue:
+        w_message += "^x00F %s " % options.blue
+    if options.red:
+        w_message += "^xF00 %s " % options.red
+
+    dcw = DynamicConfigWriter(gametype=options.gametype,
+                              minplayers=options.minplayers,
+                              teamtalk_config_filename=options.ttconfig,
+                              nexuiz_folder=options.nexuiz_folder,
+                              url=options.url,
+                              fraglimit=options.fraglimit,
+                              message=w_message)
+
+    if options.nex:
+        dcw.update_nexuiz_config()
+    if options.tt:
+        dcw.update_teamtalk_config()
+
+    print "Nexuiz Folder: %s" % options.nexuiz_folder
+    print "Nexuiz: %s" % options.nexuiz
+    print "HFS.exe: %s" % options.hfs
+    print "Teamtalkd: %s" % options.teamtalk
+    print "Teamtalk config: %s" % options.ttconfig
+    print ""
+
+    if options.launch:
+        if options.tt:
+            print "Launching TeamTalk"
+            if options.nex:
+                command = '%s -nd -c %s &' % (options.teamtalk, options.ttconfig)
+            else:
+                command = '%s -nd -c %s' % (options.teamtalk, options.ttconfig)
+            os.system(command)
+            print "Done\n"
+
+        if options.nex:
+            print "Launching HFS"
+            subprocess.Popen(['wine', options.hfs])
+            print "Done\n"
+
+            print "Launching Nexuiz Server"
+            full_nexuiz = os.path.join(options.nexuiz_folder, options.nexuiz)
+            os.chdir(options.nexuiz_folder)
+            os.system('%s +serverconfig %s' % (full_nexuiz, dcw.get_nexuiz_config_filename()))
 
 
 if __name__ == '__main__':
-	main()
+    main()
